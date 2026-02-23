@@ -6,7 +6,7 @@
 
 🌍 Live Demo:
 
-https://your-app-name.streamlit.app
+https://speech-transcriber.streamlit.app/
 
  🌍Features:
 ⚡ One-click voice recording
