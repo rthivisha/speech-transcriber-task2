@@ -2,6 +2,7 @@ import streamlit as st
 import whisper
 from streamlit_mic_recorder import mic_recorder
 import tempfile
+import os
 
 st.set_page_config(page_title="Speech Recognition App", layout="centered")
 
@@ -51,6 +52,14 @@ st.markdown("""
     color: #181833;
     margin-bottom: 30px;
 }
+ .sub {
+    text-align: left;
+    font-size: 28px;
+    color: #3b3b98;
+    margin-bottom: 30px;
+     font-weight:bold;
+}
+
 
 /* Elegant divider line */
 .elegant-divider {
@@ -123,6 +132,7 @@ st.markdown("""
 # ----------- HEADER -----------
 st.markdown('<div class="title">🎧 Speech Recognition App</div>', unsafe_allow_html=True)
 st.markdown('<div class="subtitle">Convert your voice into real-time text instantly with AI-powered transcription.</div>', unsafe_allow_html=True)
+st.markdown('<div class="sub">Start speaking :</div>', unsafe_allow_html=True)
 
 st.markdown('<div class="chat-container">', unsafe_allow_html=True)
 
@@ -175,3 +185,39 @@ if audio:
             )
 
         st.rerun()
+        st.markdown("---")
+st.markdown("""
+<div style="
+    text-align:left;
+    font-size:27px;
+    font-weight:bold;
+    color:#3b3b98;
+    margin-top:20px;">
+     Upload Audio File for Transcription 📂 :
+</div>
+""", unsafe_allow_html=True)
+
+uploaded_file = st.file_uploader(
+    "Choose an audio file",
+    type=["mp3", "wav", "m4a", "mp4"],
+    key="file_upload_section"
+)
+
+if uploaded_file is not None:
+    st.audio(uploaded_file)
+
+    if st.button("Transcribe Uploaded File"):
+        with st.spinner("Transcribing uploaded audio..."):
+
+            # Save temporarily
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmp_file:
+                tmp_file.write(uploaded_file.read())
+                temp_path = tmp_file.name
+
+            # Transcribe using SAME model you already loaded
+            result = model.transcribe(temp_path)
+
+            # Remove temp file
+            os.remove(temp_path)
+
+        st.success("Transcription Completed ✅")
